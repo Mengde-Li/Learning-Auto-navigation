@@ -183,81 +183,6 @@ def get_robot_state():
         print(robot_joints)
         break
 
-def example_move_joint():
-    ur_Robot=UR_Robot( )
-
-    while not rospy.is_shutdown():
-        robot_joints=ur_Robot.get_joints_state()
-        print("Get robot joints is:")
-        print(robot_joints)
-        target_joints=robot_joints
-        target_joints[0]=target_joints[0]+0.5
-        ur_Robot.move_joint(target_joints,t=3)
-        time.sleep(1)
-
-
-        robot_joints=ur_Robot.get_joints_state()
-        print("Get robot joints is:")
-        print(robot_joints)
-        target_joints=robot_joints
-        target_joints[0]=target_joints[0]-0.3
-        ur_Robot.move_joint(target_joints,t=3)
-        time.sleep(1)
-
-        break
-        
-def record_trajectory():
-    """
-    Begin record:
-        rostopic pub /record_state std_msgs/Int16 "data: 0" 
-    Stop record:
-        rostopic pub /record_state std_msgs/Int16 "data: 0" 
-    
-    """
-    save_number=len(os.listdir(os.path.join(Abs_Path,"save_trajectorys")))
-    ur_Robot=UR_Robot(sim=False)
-    sample_hz=100
-    sample_time=1/float(sample_hz)
-
-    record_poses_list=[]
-    begin_record_flag=False
-
-    #1: robot move to first pose
-    first_pose=np.array([-2.1541011969195765, -1.169234113102295, -1.5662903785705566, -1.9789892635741175, 1.6539533138275146, 1.3494386672973633])
-    while not rospy.is_shutdown():
-        ur_Robot.move_joint(first_pose,t=5)
-        print("Robot move to first pose")
-        break
-
-    #2: robot move down to concate pose
-    concate_pose=np.array([[-2.1841538588153284, -1.802648206750387, -1.3230290412902832, -1.5523389142802735, 1.6236369609832764, 1.1375670433044434]])
-    while not rospy.is_shutdown():
-        ur_Robot.move_joint(concate_pose)
-        print("Robot move to first pose")
-        break
-
-
-    while not rospy.is_shutdown():
-        if ur_Robot.Flag_record_joints==1:
-            begin_record_flag=True
-            begin_time=time.time()
-            robot_joints=ur_Robot.get_joints_state()
-            record_poses_list.append(robot_joints)
-            sleep_time=sample_time-(time.time()-begin_time)
-            time.sleep(max(sleep_time,0))
-
-            if ur_Robot.Flag_record_joints==0:
-                break
-
-        else:
-            print("wait for record data...")
-            time.sleep(1)
-
-    target_joints=np.array(record_poses_list)
-    print("save target_joinst pose is:")
-    print(target_joints.shape)
-
-    np.save(os.path.join(Abs_Path,"save_trajectorys/target_joints_{}.npy".format(save_number)),target_joints)
 
 def replay_robot_trajectory_sim():
     target_poses=np.load(os.path.join(Abs_Path,"save_trajectorys/target_joints.npy"))
@@ -299,28 +224,6 @@ def replay_robot_trajectory():
         break
         
 
-def record_video():
-    target_poses=np.load(os.path.join(Abs_Path,"save_trajectorys/target_joints_27.npy"))
-    print(target_poses.shape)
-
-    ur_Robot=UR_Robot(sim=False)
-    
-    
-    #1: robot move to first pose
-    first_pose=np.array([-2.1541011969195765, -1.169234113102295, -1.5662903785705566, -1.9789892635741175, 1.6539533138275146, 1.3494386672973633])
-    while not rospy.is_shutdown():
-        ur_Robot.move_joint(first_pose)
-        rospy.sleep(5)
-        print("Robot move to first pose")
-        break
-
-
-    #2: robot move down to concate pose
-    concate_pose=np.array([[-2.1841538588153284, -1.802648206750387, -1.3230290412902832, -1.5523389142802735, 1.6236369609832764, 1.1375670433044434]])
-    while not rospy.is_shutdown():
-        ur_Robot.move_joint(concate_pose)
-        print("Robot move to first pose")
-        break
 
 
     #2: robot move trajectory
@@ -348,9 +251,7 @@ def record_video():
 
 if __name__ == "__main__":
     # get_robot_state()
-    # example_move_joint()
     # record_trajectory()
-    replay_robot_trajectory()
-    # record_video()
+
 
     
