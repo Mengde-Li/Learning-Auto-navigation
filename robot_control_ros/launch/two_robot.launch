@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<launch>
+  <include file="$(find franka_interface)/launch/interface.launch"/>
+  <include file="$(find ur_robot_driver)/launch/ur5e_bringup.launch" ns="UR/"/>
+  
+</launch>
+
+
