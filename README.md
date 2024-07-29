@@ -7,3 +7,4 @@ Learning Auto-navigation project
 
 3: The SRC file is configured in the ROS environment for this project .
 
+4：The ROS drivert files is in the ur_robot_ROS_driver folder.
